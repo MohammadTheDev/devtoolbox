@@ -1,14 +1,41 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// =========================================
+// Prisma Schema for devtoolbox
+// =========================================
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  passwordHash  String
+  createdAt     DateTime @default(now())
+
+  usages        ToolUsage[]
+}
+
+model Tool {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  category    String?
+  createdAt   DateTime @default(now())
+
+  usages      ToolUsage[]
+}
+
+model ToolUsage {
+  id        String   @id @default(cuid())
+  userId    String
+  toolId    String
+  createdAt DateTime @default(now())
+
+  user      User  @relation(fields: [userId], references: [id])
+  tool      Tool  @relation(fields: [toolId], references: [id])
 }
