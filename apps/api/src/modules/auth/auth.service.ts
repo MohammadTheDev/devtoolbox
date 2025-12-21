@@ -1,26 +1,34 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
 import { UserService } from "../user/user.service";
 import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService
+  ) {}
 
-  async validateUser(email: string, password: string) {
+  async login(email: string, password: string) {
     const user = await this.userService.findByEmail(email);
 
     if (!user) {
       throw new UnauthorizedException("Invalid credentials");
     }
 
-    const passwordValid = await bcrypt.compare(password, user.passwordHash);
-
-    if (!passwordValid) {
+    const isValid = await bcrypt.compare(password, user.passwordHash);
+    if (!isValid) {
       throw new UnauthorizedException("Invalid credentials");
     }
 
-    // ⚠️ موقتاً پسورد رو حذف می‌کنیم
-    const { passwordHash, ...safeUser } = user;
-    return safeUser;
+    const payload = {
+      sub: user.id,
+      email: user.email,
+    };
+
+    return {
+      accessToken: await this.jwtService.signAsync(payload),
+    };
   }
 }
