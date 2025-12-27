@@ -7,7 +7,7 @@
     "dev": "nest start --watch",
     "start": "nest start",
     "start:dev": "nest start --watch",
-    "start:prod": "node .",
+    "start:prod": "node dist/src/main.ts",
     "postinstall": "prisma generate"
   },
   "keywords": [],
