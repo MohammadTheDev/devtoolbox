@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: devtoolbox-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: devtoolbox
+      POSTGRES_PASSWORD: devtoolbox
+      POSTGRES_DB: devtoolbox
+    ports: 
+      - "5432:5432"
+    volumes:
+      - devtoolbox_pgdata:/var/lib/postgresql/data
+
+volumes: 
+  devtoolbox_pgdata:
